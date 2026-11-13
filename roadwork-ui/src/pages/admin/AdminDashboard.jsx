@@ -25,6 +25,7 @@ import RoadSegmentsTab from './RoadSegmentsTab'
 import AssignInspectorCell from './AssignInspectorCell'
 import InspectionReportsTab from './InspectionReportsTab'
 import PerformanceTab from './PerformanceTab'
+import AnalyticsTab from './AnalyticsTab'
 import { getInspectors } from '../../api/inspectionApi'
 
 function AdminDashboard() {
@@ -204,6 +205,12 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
               onClick={() => setActiveTab('performance')}
           >
             Performance
+          </button>
+          <button
+              style={activeTab === 'analytics' ? styles.mainTabActive : styles.mainTab}
+              onClick={() => setActiveTab('analytics')}
+          >
+            Analytics
           </button>
         </div>
 
@@ -466,6 +473,7 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
         {activeTab === 'roadSegments' && <RoadSegmentsTab />}
         {activeTab === 'inspections' && <InspectionReportsTab />}
         {activeTab === 'performance' && <PerformanceTab />}
+        {activeTab === 'analytics' && <AnalyticsTab />}
       </div>
 
 
@@ -510,8 +518,7 @@ const styles = {
   },
   statValue: { fontSize: '1.8rem', fontWeight: '700', color: '#1a1a2e' },
   statLabel: { fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' },
-
-  mainTabs: { display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' },
+  mainTabs: { display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' },
   mainTab: {
     padding: '0.65rem 1.25rem', background: '#fff', border: '1px solid #e5e7eb',
     borderRadius: '8px', fontSize: '0.9rem', cursor: 'pointer',

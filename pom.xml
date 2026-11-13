@@ -129,6 +129,13 @@
 			<artifactId>spring-dotenv</artifactId>
 			<version>4.0.0</version>
 		</dependency>
+
+		<!-- PDF generation for the summary report -->
+		<dependency>
+			<groupId>com.github.librepdf</groupId>
+			<artifactId>openpdf</artifactId>
+			<version>1.3.42</version>
+		</dependency>
 	</dependencies>
 
 	<build>
