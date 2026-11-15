@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,11 @@ public class AdminService {
     public List<WorkRequestResponse> getAllRequests() {
         return workRequestRepository.findAll()
                 .stream()
+                .sorted(Comparator
+                        .comparing((WorkRequest w) -> !Boolean.TRUE.equals(w.getEmergency()))
+                        .thenComparing(w -> w.getPriority() == null ? 2 : w.getPriority())
+                        .thenComparing(WorkRequest::getCreatedAt,
+                                Comparator.nullsLast(Comparator.reverseOrder())))
                 .map(workRequestService::toResponse)
                 .collect(Collectors.toList());
     }

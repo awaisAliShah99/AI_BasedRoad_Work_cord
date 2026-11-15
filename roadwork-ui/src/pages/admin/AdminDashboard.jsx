@@ -26,6 +26,7 @@ import AssignInspectorCell from './AssignInspectorCell'
 import InspectionReportsTab from './InspectionReportsTab'
 import PerformanceTab from './PerformanceTab'
 import AnalyticsTab from './AnalyticsTab'
+import DocumentCell from './DocumentCell'
 import { getInspectors } from '../../api/inspectionApi'
 
 function AdminDashboard() {
@@ -236,19 +237,14 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
                 <tbody>
                   {requests.map(req => (
                     <tr key={req.id} style={styles.tr}>
-                      <td style={styles.td}>{req.departmentName}</td>
+                      <td style={styles.td}>
+                        {req.emergency && <span style={styles.emergencyBadge}>EMERGENCY</span>}
+                        {req.departmentName}
+                      </td>
                       <td style={styles.td}>{req.roadSegmentName}</td>
                       <td style={styles.td}>{req.startDate} → {req.endDate}</td>
                       <td style={styles.td}>
-                        {req.documentUrl ? (
-                            <a href={`http://localhost:9090${req.documentUrl}`} target="_blank" rel="noreferrer">
-                              <img
-                                  src={`http://localhost:9090${req.documentUrl}`}
-                                  alt="document"
-                                  style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6 }}
-                              />
-                            </a>
-                        ) : '—'}
+                        <DocumentCell request={req} onChanged={loadData} />
                       </td>
                       <td style={styles.td}>
                         <AssignInspectorCell request={req} inspectors={inspectors} onAssigned={loadData} />
@@ -585,6 +581,10 @@ const styles = {
     fontWeight: '600', cursor: 'pointer',
   },
   conflictNote: { fontSize: '0.78rem', color: '#dc2626', fontStyle: 'italic' },
+  emergencyBadge: {
+    background: '#dc2626', color: '#fff', borderRadius: '999px',
+    padding: '0.1rem 0.5rem', fontSize: '0.65rem', fontWeight: '700', marginRight: '0.4rem',
+  },
 
   conflictList: { display: 'flex', flexDirection: 'column', gap: '1rem' },
   conflictCard: {

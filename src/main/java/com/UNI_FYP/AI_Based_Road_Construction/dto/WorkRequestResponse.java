@@ -1,7 +1,9 @@
 package com.UNI_FYP.AI_Based_Road_Construction.dto;
 
+import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.DocumentStatus;
 import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.RequestStatus;
 import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.WorkType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +31,9 @@ public class WorkRequestResponse {
     private String    adminRemarks;
     private String documentUrl;
     private String inspectorName;
+    private DocumentStatus documentStatus;
+    private String documentRemarks;
+    private Boolean emergency;
     private LocalDateTime createdAt;
 
     // Latitude and longitude so Leaflet.js can place the map marker

@@ -1,6 +1,7 @@
 package com.UNI_FYP.AI_Based_Road_Construction.entity;
 import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.RequestStatus;
 import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.WorkType;
+import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.DocumentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -70,6 +71,19 @@ public class WorkRequest {
 
     @Column(name = "document_url", length = 500)
     private String documentUrl;
+
+    // Admin's verdict on the attached document photo (null when there is no document)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "document_status")
+    private DocumentStatus documentStatus;
+
+    @Column(name = "document_remarks", length = 500)
+    private String documentRemarks;
+
+    // Emergency requests are alerted to admins immediately and listed first
+    @Column(name = "is_emergency", columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean emergency = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewed_by")

@@ -187,6 +187,38 @@ public class NotificationService {
 
         sendEmail(adminEmail, subject, body);
     }
+    // ─────────────────────────────────────────────────────────────
+    // EMERGENCY REQUEST — sent to every admin as soon as it is submitted
+    // ─────────────────────────────────────────────────────────────
+    @Async
+    public void sendEmergencyAlert(
+            String adminEmail,
+            String departmentName,
+            String roadSegmentName,
+            String startDate,
+            String endDate,
+            String description
+    ) {
+        String subject = "🚨 EMERGENCY work request — " + roadSegmentName;
+
+        String body = """
+                An EMERGENCY work request has been submitted and needs immediate attention.
+
+                Details:
+                ─────────────────────────────────
+                Department   : %s
+                Road Segment : %s
+                Dates        : %s to %s
+                Description  : %s
+                ─────────────────────────────────
+
+                Please review it in the admin dashboard.
+
+                Road Work Coordination System
+                """.formatted(departmentName, roadSegmentName, startDate, endDate, description);
+
+        sendEmail(adminEmail, subject, body);
+    }
 
     // ─────────────────────────────────────────────────────────────
     // PRIVATE HELPER — actual email sending

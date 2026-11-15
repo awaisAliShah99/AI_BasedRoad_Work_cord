@@ -16,9 +16,7 @@ function DepartmentDashboard() {
   const [showModal, setShowModal] = useState(false)
   const [filter, setFilter] = useState('ALL')
 
-  useEffect(() => {
-    loadRequests()
-  }, [])
+
 
   const loadRequests = () => {
     setLoading(true)
@@ -27,6 +25,11 @@ function DepartmentDashboard() {
       .catch(() => setRequests([]))
       .finally(() => setLoading(false))
   }
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadRequests()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSubmitSuccess = () => {
     setShowModal(false)
@@ -128,7 +131,32 @@ function DepartmentDashboard() {
                     <td className="px-6 py-4 text-sm text-slate-700">{req.workType?.replace(/_/g, ' ')}</td>
                     <td className="px-6 py-4 text-sm text-slate-700">{req.startDate}</td>
                     <td className="px-6 py-4 text-sm text-slate-700">{req.endDate}</td>
-                    <td className="px-6 py-4"><StatusBadge status={req.status} /></td>
+                    <td className="px-6 py-4">
+                      <StatusBadge status={req.status} />
+                      {req.emergency && (
+                          <span className="ml-2 rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                          EMERGENCY
+                        </span>
+                      )}
+                      {req.documentStatus && (
+                          <div className="mt-1 text-xs">
+                          <span
+                              className={
+                                req.documentStatus === 'VERIFIED'
+                                    ? 'font-semibold text-green-700'
+                                    : req.documentStatus === 'REJECTED'
+                                        ? 'font-semibold text-red-700'
+                                        : 'font-semibold text-amber-700'
+                              }
+                          >
+                            Document: {req.documentStatus}
+                          </span>
+                            {req.documentStatus === 'REJECTED' && req.documentRemarks && (
+                                <div className="text-slate-500">Reason: {req.documentRemarks}</div>
+                            )}
+                          </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4">
                       {(req.status === 'PENDING' || req.status === 'CONFLICT_FLAGGED') && (
                         <button

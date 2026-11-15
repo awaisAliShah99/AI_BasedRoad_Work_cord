@@ -14,7 +14,7 @@ const WORK_TYPES = [
 
 function SubmitRequestModal({ onClose, onSuccess }) {
   const [roadSegments, setRoadSegments] = useState([])
-  const [segmentsLoading, setSegmentsLoading] = useState(false)
+  const [segmentsLoading, setSegmentsLoading] = useState(true)
   const [roadSegmentsError, setRoadSegmentsError] = useState('')
   const [formData, setFormData] = useState({
     roadSegmentId: '',
@@ -23,34 +23,34 @@ function SubmitRequestModal({ onClose, onSuccess }) {
     startDate: '',
     endDate: '',
     priority: 2,
+    emergency: false,
   })
   const [error, setError] = useState('')
   const [photo, setPhoto] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  // Load road segments for the dropdown when modal opens
+  // Load road segments for the dropdown when the modal opens
   useEffect(() => {
-    loadSegments()
-    }, [])
-    const loadSegments = () => {
-    setSegmentsLoading(true)
-    setRoadSegmentsError("")
+    let cancelled = false
     getRoadSegments()
-      .then(res =>{
-      const list = res.data.data || [];
-      setRoadSegments(list);
-      if(list.length===0){
-      setRoadSegmentsError(
-      "No road segment available .Contact an Administrator"
-      );
-     }
-  })
-   .catch (err=>{
-   setRoadSegmentsError(err.response?.data?.message || "Failed to load Road segments")
-   })
-   .finally (() => {setSegmentsLoading(false);
- });
-};
+        .then(res => {
+          if (cancelled) return
+          const list = res.data.data || []
+          setRoadSegments(list)
+          if (list.length === 0) {
+            setRoadSegmentsError('No road segment available. Contact an administrator')
+          }
+        })
+        .catch(err => {
+          if (!cancelled) {
+            setRoadSegmentsError(err.response?.data?.message || 'Failed to load road segments')
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setSegmentsLoading(false)
+        })
+    return () => { cancelled = true }
+  }, [])
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   };
@@ -96,6 +96,11 @@ function SubmitRequestModal({ onClose, onSuccess }) {
 
           <div style={styles.field}>
             <label style={styles.label}>Road Segment</label>
+            {roadSegmentsError && (
+                <div style={{ fontSize: '0.8rem', color: '#dc2626', marginBottom: '0.35rem' }}>
+                  {roadSegmentsError}
+                </div>
+            )}
             <select
               style={styles.input}
               name="roadSegmentId"
@@ -103,8 +108,7 @@ function SubmitRequestModal({ onClose, onSuccess }) {
               onChange={handleChange}
               required
             >
-              <option value="">Select road segment</option>
-              {roadSegments.map(seg => (
+              <option value="">{segmentsLoading ? 'Loading road segments...' : 'Select road segment'}</option>              {roadSegments.map(seg => (
                 <option key={seg.id} value={seg.id}>
                   {seg.name} — {seg.city}
                 </option>
@@ -165,6 +169,22 @@ function SubmitRequestModal({ onClose, onSuccess }) {
               <option value={2}>Normal</option>
               <option value={3}>Low</option>
             </select>
+          </div>
+          <div style={styles.field}>
+            <label style={{ ...styles.label, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input
+                  type="checkbox"
+                  checked={formData.emergency}
+                  onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        emergency: e.target.checked,
+                        priority: e.target.checked ? 1 : formData.priority,
+                      })
+                  }
+              />
+              Emergency request (High priority, admins are alerted by email immediately)
+            </label>
           </div>
 
           <div style={styles.field}>

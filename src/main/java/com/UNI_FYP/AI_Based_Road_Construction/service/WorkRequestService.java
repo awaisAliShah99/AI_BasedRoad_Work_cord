@@ -9,6 +9,7 @@ import com.UNI_FYP.AI_Based_Road_Construction.entity.User;
 import com.UNI_FYP.AI_Based_Road_Construction.entity.WorkRequest;
 import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.RequestStatus;
 import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.UserRole;
+import com.UNI_FYP.AI_Based_Road_Construction.entity.enums.DocumentStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import com.UNI_FYP.AI_Based_Road_Construction.repository.Roadsegmentrepository;
@@ -56,7 +57,8 @@ public class WorkRequestService {
             throw new AppException(
                     "Road segment is not active", HttpStatus.BAD_REQUEST);
         }
-
+        boolean isEmergency = Boolean.TRUE.equals(request.getEmergency());
+        boolean hasDocument = request.getDocumentUrl() != null && !request.getDocumentUrl().isBlank();
         // 3. Build and save the WorkRequest entity
         WorkRequest workRequest = WorkRequest.builder()
                 .department(freshUser.getDepartment())
@@ -65,10 +67,10 @@ public class WorkRequestService {
                 .workType(request.getWorkType())
                 .description(request.getDescription())
                 .documentUrl(request.getDocumentUrl())
-                .startDate(request.getStartDate())
+                .documentStatus(hasDocument ? DocumentStatus.PENDING : null)
+                .emergency(isEmergency)                .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
-                .priority(request.getPriority() != null ? request.getPriority() : 2)
-                .status(RequestStatus.PENDING)
+                .priority(isEmergency ? 1 : (request.getPriority() != null ? request.getPriority() : 2))                .status(RequestStatus.PENDING)
                 .build();
 
         WorkRequest saved = workRequestRepository.save(workRequest);
@@ -77,6 +79,18 @@ public class WorkRequestService {
         // If conflicts found → status updated to CONFLICT_FLAGGED
         // and emails sent to both departments + admin
         conflictDetectionService.detect(saved);
+
+        // 4b. Emergency: alert every admin right away
+        if (isEmergency) {
+            userRepository.findByRole(UserRole.ADMIN).forEach(admin ->
+                    notificationService.sendEmergencyAlert(
+                            admin.getEmail(),
+                            freshUser.getDepartment().getName(),
+                            roadSegment.getName(),
+                            String.valueOf(request.getStartDate()),
+                            String.valueOf(request.getEndDate()),
+                            String.valueOf(request.getDescription())));
+        }
 
         // 5. Reload to get updated status after conflict detection
         WorkRequest updated = workRequestRepository
@@ -233,6 +247,9 @@ public class WorkRequestService {
                 .workType(w.getWorkType())
                 .description(w.getDescription())
                 .documentUrl(w.getDocumentUrl())
+                .documentStatus(w.getDocumentStatus())
+                .documentRemarks(w.getDocumentRemarks())
+                .emergency(Boolean.TRUE.equals(w.getEmergency()))
                 .inspectorName(w.getAssignedInspector() != null
                         ? w.getAssignedInspector().getFullName() : null)
                 .startDate(w.getStartDate())

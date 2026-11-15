@@ -37,3 +37,6 @@ export const getSubmittedComplaints = () => api.get('/api/admin/complaints/submi
 export const markComplaintUnderReview = (id) => api.put(`/api/admin/complaints/${id}/review`)
 export const resolveComplaintAdmin = (id, adminResponse, dismiss) =>
   api.put(`/api/admin/complaints/${id}/resolve`, { adminResponse, dismiss })
+
+export const verifyDocument = (requestId, status, remarks) =>
+    api.put(`/api/admin/requests/${requestId}/document-verification`, { status, remarks })
