@@ -219,7 +219,11 @@ public class NotificationService {
 
         sendEmail(adminEmail, subject, body);
     }
-
+    // Generic reminder mail — the scheduled job writes the text
+    @Async
+    public void sendReminder(String toEmail, String subject, String body) {
+        sendEmail(toEmail, subject, body);
+    }
     // ─────────────────────────────────────────────────────────────
     // PRIVATE HELPER — actual email sending
     // All public methods call this internally

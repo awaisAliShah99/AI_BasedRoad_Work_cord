@@ -16,8 +16,9 @@ import {
   getPendingConflicts,
    getAllConflicts,
    getAllComplaints,
-     getSubmittedComplaints,
-     markComplaintUnderReview,
+  getSubmittedComplaints,
+  markComplaintUnderReview,
+  runReminders,
 } from '../../api/adminApi'
 import { getAuditLogs } from '../../api/auditLogApi'
 import DepartmentsTab from './DepartmentsTab'
@@ -89,6 +90,23 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, conflictFilter, complaintFilter])
+  const handleRunReminders = async () => {
+    if (!window.confirm('Run the reminder and escalation job now? Emails will be sent.')) return
+    try {
+      const res = await runReminders()
+      const r = res.data.data
+      alert(
+          `Reminder job finished\n` +
+          `Start reminders: ${r.startReminders}\n` +
+          `Ending-soon reminders: ${r.endReminders}\n` +
+          `Overdue notices: ${r.overdueNotices}\n` +
+          `Escalated to High priority: ${r.escalated}`
+      )
+      loadData()
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to run reminders')
+    }
+  }
  const handleMarkUnderReview = async (id) => {
    try {
      await markComplaintUnderReview(id)
@@ -216,7 +234,15 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
         </div>
 
         {activeTab === 'requests' && (
-          loading ? (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
+              <button style={styles.resolveBtn} onClick={handleRunReminders}>
+                Run reminders now
+              </button>
+            </div>
+        )}
+
+        {activeTab === 'requests' && (
+            loading ? (
             <div style={styles.emptyState}>Loading...</div>
           ) : requests.length === 0 ? (
             <div style={styles.emptyState}>No work requests yet</div>
@@ -239,6 +265,7 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
                     <tr key={req.id} style={styles.tr}>
                       <td style={styles.td}>
                         {req.emergency && <span style={styles.emergencyBadge}>EMERGENCY</span>}
+                        {req.escalated && <span style={styles.escalatedBadge}>ESCALATED</span>}
                         {req.departmentName}
                       </td>
                       <td style={styles.td}>{req.roadSegmentName}</td>
@@ -583,6 +610,10 @@ const styles = {
   conflictNote: { fontSize: '0.78rem', color: '#dc2626', fontStyle: 'italic' },
   emergencyBadge: {
     background: '#dc2626', color: '#fff', borderRadius: '999px',
+    padding: '0.1rem 0.5rem', fontSize: '0.65rem', fontWeight: '700', marginRight: '0.4rem',
+  },
+  escalatedBadge: {
+    background: '#d97706', color: '#fff', borderRadius: '999px',
     padding: '0.1rem 0.5rem', fontSize: '0.65rem', fontWeight: '700', marginRight: '0.4rem',
   },
 

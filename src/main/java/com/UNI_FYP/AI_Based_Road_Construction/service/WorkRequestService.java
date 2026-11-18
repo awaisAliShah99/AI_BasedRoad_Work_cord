@@ -250,6 +250,7 @@ public class WorkRequestService {
                 .documentStatus(w.getDocumentStatus())
                 .documentRemarks(w.getDocumentRemarks())
                 .emergency(Boolean.TRUE.equals(w.getEmergency()))
+                .escalated(Boolean.TRUE.equals(w.getEscalated()))
                 .inspectorName(w.getAssignedInspector() != null
                         ? w.getAssignedInspector().getFullName() : null)
                 .startDate(w.getStartDate())

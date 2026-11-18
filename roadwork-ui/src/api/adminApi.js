@@ -40,3 +40,5 @@ export const resolveComplaintAdmin = (id, adminResponse, dismiss) =>
 
 export const verifyDocument = (requestId, status, remarks) =>
     api.put(`/api/admin/requests/${requestId}/document-verification`, { status, remarks })
+
+export const runReminders = () => api.post('/api/admin/reminders/run')

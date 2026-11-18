@@ -85,6 +85,24 @@ public class WorkRequest {
     @Builder.Default
     private Boolean emergency = false;
 
+    // Bookkeeping for the scheduled job, so the same email is never sent twice
+    @Column(name = "start_reminder_sent", columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean startReminderSent = false;
+
+    @Column(name = "end_reminder_sent", columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean endReminderSent = false;
+
+    @Column(name = "overdue_notice_sent", columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean overdueNoticeSent = false;
+
+    // True once a long-pending request was automatically raised to High priority
+    @Column(name = "is_escalated", columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean escalated = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewed_by")
     private User reviewedBy;

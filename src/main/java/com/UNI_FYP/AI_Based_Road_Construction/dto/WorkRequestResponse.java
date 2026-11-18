@@ -34,6 +34,7 @@ public class WorkRequestResponse {
     private DocumentStatus documentStatus;
     private String documentRemarks;
     private Boolean emergency;
+    private Boolean escalated;
     private LocalDateTime createdAt;
 
     // Latitude and longitude so Leaflet.js can place the map marker
