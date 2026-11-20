@@ -10,3 +10,5 @@ export const getInspectionReports = () => api.get('/api/admin/inspection-reports
 export const getMyAssignments = () => api.get('/api/inspector/assignments')
 export const getMyReports = () => api.get('/api/inspector/reports')
 export const submitInspectionReport = (data) => api.post('/api/inspector/reports', data)
+
+export const createInspector = (data) => api.post('/api/admin/inspectors', data)

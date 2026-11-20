@@ -119,7 +119,6 @@ function RegisterPage() {
               <option value="CITIZEN">Citizen</option>
               <option value="DEPARTMENT_USER">Department User</option>
               <option value="ADMIN">Admin</option>
-              <option value="INSPECTOR">Inspector</option>
             </select>
           </div>
 

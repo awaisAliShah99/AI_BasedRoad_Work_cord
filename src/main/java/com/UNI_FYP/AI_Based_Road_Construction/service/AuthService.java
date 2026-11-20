@@ -41,6 +41,17 @@ public class AuthService {
         Department department = null;
         UserRole role = request.getRole() != null ? request.getRole() : UserRole.CITIZEN;
 
+        // Privileged roles cannot be chosen freely at registration.
+        // (400, not 403: the frontend logs the user out on every 403.)
+        if (role == UserRole.INSPECTOR) {
+            throw new AppException(
+                    "Inspector accounts can only be created by an administrator", HttpStatus.BAD_REQUEST);
+        }
+        if (role == UserRole.ADMIN && userRepository.existsByRole(UserRole.ADMIN)) {
+            throw new AppException(
+                    "An administrator already exists. New admins cannot self-register", HttpStatus.BAD_REQUEST);
+        }
+
         if (role == UserRole.DEPARTMENT_USER) {
             if (request.getDepartmentId() == null) {
                 throw new AppException("Department ID is required for department users",HttpStatus.BAD_REQUEST);

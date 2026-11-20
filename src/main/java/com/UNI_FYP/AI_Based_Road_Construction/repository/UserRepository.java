@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
     // user by AuthService to check if email already Registered or not
     boolean  existsByEmail(String email);
+    boolean existsByRole(UserRole role);
 
     // used by AuthService.loadUserNameByUserName() called by spring security
     Optional<User> findByEmail(String email);
