@@ -28,6 +28,7 @@ import InspectionReportsTab from './InspectionReportsTab'
 import PerformanceTab from './PerformanceTab'
 import AnalyticsTab from './AnalyticsTab'
 import DocumentCell from './DocumentCell'
+import FeedbackTab from './FeedbackTab'
 import { getInspectors } from '../../api/inspectionApi'
 
 function AdminDashboard() {
@@ -230,6 +231,12 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
               onClick={() => setActiveTab('analytics')}
           >
             Analytics
+          </button>
+          <button
+              style={activeTab === 'feedback' ? styles.mainTabActive : styles.mainTab}
+              onClick={() => setActiveTab('feedback')}
+          >
+            Feedback
           </button>
         </div>
 
@@ -497,6 +504,7 @@ const [selectedComplaint, setSelectedComplaint] = useState(null)
         {activeTab === 'inspections' && <InspectionReportsTab />}
         {activeTab === 'performance' && <PerformanceTab />}
         {activeTab === 'analytics' && <AnalyticsTab />}
+        {activeTab === 'feedback' && <FeedbackTab />}
       </div>
 
 

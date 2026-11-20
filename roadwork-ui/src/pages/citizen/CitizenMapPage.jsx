@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar'
 import WorkRequestMap from '../../components/WorkRequestMap'
 import MapLegend from '../../components/MapLegend'
 import ReportComplaintModal from './ReportComplaintModal'
+import CompletedWorkSection from './CompletedWorkSection'
 import { getActiveWorkRequests } from '../../api/workRequestApi'
 import { getRoadSegments } from '../../api/roadSegmentApi'
 
@@ -118,7 +119,7 @@ function CitizenMapPage() {
             </div>
           </>
         )}
-
+        <CompletedWorkSection />
         <div style={styles.reportBanner}>
           <div>
             <div style={styles.reportBannerTitle}>Notice something wrong?</div>
